@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "419058148719",
+    "project_id": "sospet-ac5bb",
+    "storage_bucket": "sospet-ac5bb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:419058148719:android:3505d7fdf236984a9ff49a",
+        "android_client_info": {
+          "package_name": "com.example.sospet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDzG858OYRqWDbTfblm9x5Ck_Omsn9i20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
