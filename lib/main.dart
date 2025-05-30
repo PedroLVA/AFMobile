@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sospet/screen/home_page.dart';
 import 'package:sospet/screen/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +24,16 @@ class MyApp extends StatelessWidget {
       ),
       home: AuthWrapper(),
       debugShowCheckedModeBanner: false,
+      // ... other properties
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('pt', 'BR'), // Portuguese, Brazil
+        const Locale('en', 'US'), // English, US (optional fallback)
+      ],
     );
   }
 }

@@ -1,8 +1,10 @@
-
+// lib/home_page.dart (Your existing file, with modifications)
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sospet/screen/reportPet_page.dart';
+import 'package:sospet/screen/searchPet_page.dart';
 import 'package:sospet/service/AuthService.dart';
-
+import 'login_page.dart';
 
 class HomePage extends StatelessWidget {
   final AuthService _authService = AuthService();
@@ -12,6 +14,7 @@ class HomePage extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
+      // ... (your existing Scaffold properties: backgroundColor, appBar)
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
         title: Text('SOS Pet'),
@@ -19,14 +22,22 @@ class HomePage extends StatelessWidget {
         foregroundColor: Colors.white,
         actions: [
           PopupMenuButton<String>(
+            icon: Icon(Icons.more_vert),
             onSelected: (value) async {
               if (value == 'logout') {
                 try {
                   await _authService.signOut();
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                        (Route<dynamic> route) => false,
                   );
+                } catch (e) {
+                  if (ScaffoldMessenger.of(context).mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
                 }
               }
             },
@@ -35,7 +46,7 @@ class HomePage extends StatelessWidget {
                 value: 'logout',
                 child: Row(
                   children: [
-                    Icon(Icons.logout),
+                    Icon(Icons.logout, color: Colors.grey[700]),
                     SizedBox(width: 8),
                     Text('Sair'),
                   ],
@@ -51,7 +62,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Welcome message
+              // ... (your existing Welcome message container) ...
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -100,7 +111,6 @@ class HomePage extends StatelessWidget {
               ),
               SizedBox(height: 30),
 
-              // Main actions
               Text(
                 'O que você gostaria de fazer?',
                 style: TextStyle(
@@ -111,7 +121,6 @@ class HomePage extends StatelessWidget {
               ),
               SizedBox(height: 20),
 
-              // Action buttons
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
@@ -124,21 +133,23 @@ class HomePage extends StatelessWidget {
                       Icons.search,
                       Colors.green,
                           () {
-                        // TODO: Navigate to search pets page
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Funcionalidade em desenvolvimento...')),
+                        // --- MODIFICATION FOR NAVIGATION ---
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SearchPetsPage()),
                         );
+                        // --- END MODIFICATION ---
                       },
                     ),
                     _buildActionCard(
                       context,
-                      'Reportar Pet Perdido',
+                      'Reportar Pet', // Changed from "Reportar Pet Perdido"
                       Icons.add_alert,
                       Colors.orange,
                           () {
-                        // TODO: Navigate to report lost pet page
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Funcionalidade em desenvolvimento...')),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ReportPetPage()),
                         );
                       },
                     ),
@@ -148,7 +159,6 @@ class HomePage extends StatelessWidget {
                       Icons.list_alt,
                       Colors.blue,
                           () {
-                        // TODO: Navigate to my posts page
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Funcionalidade em desenvolvimento...')),
                         );
@@ -160,7 +170,6 @@ class HomePage extends StatelessWidget {
                       Icons.person,
                       Colors.purple,
                           () {
-                        // TODO: Navigate to profile page
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Funcionalidade em desenvolvimento...')),
                         );
@@ -176,6 +185,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  // ... (your existing _buildActionCard method) ...
   Widget _buildActionCard(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap) {
     return Card(
       elevation: 3,
