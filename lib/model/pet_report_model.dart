@@ -11,11 +11,12 @@ class PetReportModel {
   final String size;
   final String? specialCharacteristics;
   final String reportDate;
-  final String? photoUrl; // Placeholder, might be a simulated path
+  final String? photoUrl;
   final DateTime timestamp;
   final String userId;
   final String reporterName;
   final String? reporterEmail;
+  final String? reporterPhoneNumber; // <-- ADDED
 
   PetReportModel({
     required this.id,
@@ -32,6 +33,7 @@ class PetReportModel {
     required this.userId,
     required this.reporterName,
     this.reporterEmail,
+    this.reporterPhoneNumber, // <-- ADDED to constructor
   });
 
   factory PetReportModel.fromFirestore(DocumentSnapshot doc) {
@@ -51,6 +53,7 @@ class PetReportModel {
       userId: data['userId'] ?? '',
       reporterName: data['reporterName'] ?? 'Reportante Anônimo',
       reporterEmail: data['reporterEmail'],
+      reporterPhoneNumber: data['reporterPhoneNumber'], // <-- PARSE from Firestore data
     );
   }
 }
