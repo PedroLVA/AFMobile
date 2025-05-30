@@ -1,7 +1,8 @@
-
+// login_page.dart
 import 'package:flutter/material.dart';
-import 'package:sospet/service/AuthService.dart';
-import 'register_page.dart';
+import 'package:sospet/service/AuthService.dart'; // Your AuthService path
+import 'register_page.dart'; // Your RegisterPage path
+import 'home_page.dart'; // <--- ADD THIS IMPORT for your HomePage
 
 class LoginPage extends StatefulWidget {
   @override
@@ -29,24 +30,46 @@ class _LoginPageState extends State<LoginPage> {
 
       try {
         await _authService.signInWithEmailAndPassword(
-          _emailController.text,
+          _emailController.text.trim(), // Good to keep the trim() here too
           _passwordController.text,
         );
-        // Navigation will be handled by AuthWrapper in main.dart
+
+        // --- START: MODIFICATIONS FOR SUCCESS MESSAGE AND REDIRECTION ---
+        if (mounted) { // Check if the widget is still in the tree
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Login bem-sucedido! Redirecionando...'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate to HomePage and replace the current route
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()), // Make sure HomePage is imported
+          );
+        }
+        // --- END: MODIFICATIONS FOR SUCCESS MESSAGE AND REDIRECTION ---
+
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (mounted) { // Check if the widget is still in the tree
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()), // Your _handleAuthException in AuthService will provide the PT message
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       } finally {
-        if (mounted) setState(() => _isLoading = false);
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       }
     }
   }
 
   void _handleForgotPassword() async {
+    // ... (your existing _handleForgotPassword code remains the same)
     if (_emailController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Por favor, insira seu email primeiro')),
@@ -54,26 +77,35 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    setState(() => _isLoading = true); // Optionally show loading indicator
     try {
       await _authService.resetPassword(_emailController.text);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Email de recuperação enviado!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Email de recuperação enviado!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // ... (your existing build method remains the same)
+    // Just ensure you have the import for HomePage at the top of the file.
     return Scaffold(
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
@@ -90,15 +122,12 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SizedBox(height: 40),
-
-                // Logo/Icon
                 Icon(
                   Icons.pets,
                   size: 80,
                   color: Colors.blue[800],
                 ),
                 SizedBox(height: 20),
-
                 Text(
                   'Bem-vindo ao SOS Pet',
                   textAlign: TextAlign.center,
@@ -109,8 +138,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 40),
-
-                // Email field
                 TextFormField(
                   controller: _emailController,
                   enabled: !_isLoading,
@@ -135,8 +162,6 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 SizedBox(height: 16),
-
-                // Password field
                 TextFormField(
                   controller: _passwordController,
                   enabled: !_isLoading,
@@ -166,8 +191,6 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 SizedBox(height: 24),
-
-                // Login button
                 ElevatedButton(
                   onPressed: _isLoading ? null : _handleLogin,
                   child: _isLoading
@@ -193,15 +216,11 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(height: 16),
-
-                // Forgot password
                 TextButton(
                   onPressed: _isLoading ? null : _handleForgotPassword,
                   child: Text('Esqueceu a senha?'),
                 ),
                 SizedBox(height: 32),
-
-                // Divider
                 Row(
                   children: [
                     Expanded(child: Divider()),
@@ -213,8 +232,6 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
                 SizedBox(height: 32),
-
-                // Create account button
                 OutlinedButton(
                   onPressed: _isLoading
                       ? null
