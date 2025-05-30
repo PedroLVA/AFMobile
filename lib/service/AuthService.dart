@@ -1,9 +1,12 @@
 // services/auth_service.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sospet/model/user_model.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Get current user
   User? get currentUser => _auth.currentUser;
@@ -34,7 +37,12 @@ class AuthService {
   }
 
   // Register with email and password
-  Future<UserCredential?> registerWithEmailAndPassword(String email, String password, String name) async {
+  Future<UserCredential?> registerWithEmailAndPassword(
+      String email,
+      String password,
+      String name,
+      String phoneNumber, // <-- ADD phoneNumber PARAMETER
+      ) async {
     try {
       debugPrint('Attempting to register with email: $email');
 
@@ -43,21 +51,48 @@ class AuthService {
         password: password,
       );
 
-      debugPrint('Registration successful for user: ${result.user?.uid}');
+      debugPrint('Registration successful for Firebase Auth user: ${result.user?.uid}');
 
-      // Update display name with better error handling
-      if (result.user != null) {
+      User? firebaseUser = result.user;
+
+      if (firebaseUser != null) {
+        // 1. Update Firebase Auth display name
         try {
-          await result.user!.updateDisplayName(name);
-          await result.user!.reload(); // Reload to get updated info
-          debugPrint('Display name updated successfully');
+          await firebaseUser.updateDisplayName(name);
+          // It's good practice to reload the user to get the updated info from Firebase Auth
+          await firebaseUser.reload();
+          firebaseUser = _auth.currentUser; // Get the reloaded user
+          debugPrint('Display name updated successfully in Firebase Auth');
         } catch (e) {
-          debugPrint('Error updating display name: $e');
-          // Don't throw here, registration was successful
+          debugPrint('Error updating display name in Firebase Auth: $e');
+          // Don't throw here, auth registration was successful, profile update can be attempted
+        }
+
+        // 2. Create user profile in Firestore
+        try {
+          AppUser appUser = AppUser(
+            uid: firebaseUser!.uid, // Use reloaded user's UID
+            email: firebaseUser.email ?? email.trim(), // Use reloaded user's email
+            displayName: firebaseUser.displayName ?? name, // Use reloaded user's name
+            phoneNumber: phoneNumber,
+            createdAt: firebaseUser.metadata.creationTime ?? DateTime.now(),
+          );
+
+          await _firestore
+              .collection('users') // Your Firestore collection for users
+              .doc(firebaseUser.uid)
+              .set(appUser.toMap());
+          debugPrint('User profile created in Firestore for UID: ${firebaseUser.uid}');
+
+        } catch (e) {
+          debugPrint('Error creating user profile in Firestore: $e');
+          // Depending on your app's requirements, you might want to:
+          // - Inform the user that profile setup had an issue.
+          // - Potentially delete the Firebase Auth user if Firestore profile creation is critical (more complex rollback).
+          // For now, we'll just log it. The Auth user is created.
         }
       }
-
-      return result;
+      return result; // Return the original UserCredential
 
     } on FirebaseAuthException catch (e) {
       debugPrint('FirebaseAuthException during registration: ${e.code} - ${e.message}');

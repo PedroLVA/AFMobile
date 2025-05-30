@@ -1,7 +1,8 @@
-
+// lib/register_page.dart
 import 'package:flutter/material.dart';
 import 'package:sospet/service/AuthService.dart';
-
+// For phone number formatting, you might consider a package like 'mask_text_input_formatter'
+// import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -12,6 +13,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final AuthService _authService = AuthService();
@@ -19,10 +21,13 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
 
+  // final _phoneMaskFormatter = MaskTextInputFormatter( /* ... */ );
+
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -31,35 +36,49 @@ class _RegisterPageState extends State<RegisterPage> {
   void _handleRegister() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-
       try {
         await _authService.registerWithEmailAndPassword(
-          _emailController.text,
+          _emailController.text.trim(),
           _passwordController.text,
-          _nameController.text,
+          _nameController.text.trim(),
+          _phoneController.text.trim(),
         );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Conta criada com sucesso!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        // Navigate back to login or home (AuthWrapper will handle it)
-        Navigator.pop(context);
-
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Conta criada com sucesso! Verifique seu email para login.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context);
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       } finally {
         if (mounted) setState(() => _isLoading = false);
       }
     }
+  }
+
+  // Helper for consistent InputDecoration
+  InputDecoration _buildInputDecoration(String labelText, IconData prefixIconData, {Widget? suffixIcon}) {
+    return InputDecoration(
+      labelText: labelText,
+      prefixIcon: Icon(prefixIconData),
+      suffixIcon: suffixIcon,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      filled: true,
+      fillColor: Colors.white,
+    );
   }
 
   @override
@@ -80,15 +99,12 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SizedBox(height: 20),
-
-                // Logo/Icon
                 Icon(
                   Icons.pets,
                   size: 80,
                   color: Colors.blue[800],
                 ),
                 SizedBox(height: 20),
-
                 Text(
                   'Junte-se ao SOS Pet',
                   textAlign: TextAlign.center,
@@ -104,15 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextFormField(
                   controller: _nameController,
                   enabled: !_isLoading,
-                  decoration: InputDecoration(
-                    labelText: 'Nome completo',
-                    prefixIcon: Icon(Icons.person),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
+                  decoration: _buildInputDecoration('Nome completo', Icons.person), // <-- RESTORED
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira seu nome';
@@ -130,15 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _emailController,
                   enabled: !_isLoading,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(Icons.email),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
+                  decoration: _buildInputDecoration('Email', Icons.email), // <-- RESTORED
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira seu email';
@@ -151,14 +151,34 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 16),
 
+                // Phone number field
+                TextFormField(
+                  controller: _phoneController,
+                  enabled: !_isLoading,
+                  keyboardType: TextInputType.phone,
+                  // inputFormatters: [_phoneMaskFormatter],
+                  decoration: _buildInputDecoration('Celular (ex: 11912345678)', Icons.phone), // <-- Using helper
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor, insira seu celular';
+                    }
+                    final phoneRegExp = RegExp(r'^\d{10,11}$');
+                    if (!phoneRegExp.hasMatch(value.replaceAll(RegExp(r'\D'), ''))) {
+                      return 'Número de celular inválido';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+
                 // Password field
                 TextFormField(
                   controller: _passwordController,
                   enabled: !_isLoading,
                   obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: 'Senha',
-                    prefixIcon: Icon(Icons.lock),
+                  decoration: _buildInputDecoration( // <-- RESTORED
+                    'Senha',
+                    Icons.lock,
                     suffixIcon: IconButton(
                       icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
                       onPressed: () {
@@ -167,11 +187,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                       },
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -190,9 +205,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _confirmPasswordController,
                   enabled: !_isLoading,
                   obscureText: _obscureConfirmPassword,
-                  decoration: InputDecoration(
-                    labelText: 'Confirmar senha',
-                    prefixIcon: Icon(Icons.lock_outline),
+                  decoration: _buildInputDecoration( // <-- RESTORED
+                    'Confirmar senha',
+                    Icons.lock_outline,
                     suffixIcon: IconButton(
                       icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
                       onPressed: () {
@@ -201,11 +216,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                       },
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -222,7 +232,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Register button
                 ElevatedButton(
                   onPressed: _isLoading ? null : _handleRegister,
-                  style: ElevatedButton.styleFrom(
+                  style: ElevatedButton.styleFrom( // <-- RESTORED/ENSURED STYLE
                     backgroundColor: Colors.blue[800],
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 16),
@@ -232,7 +242,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     elevation: 2,
                   ),
                   child: _isLoading
-                      ? SizedBox(
+                      ? SizedBox( // <-- RESTORED/ENSURED LOADING INDICATOR
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(
