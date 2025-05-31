@@ -1,7 +1,7 @@
-// lib/report_pet_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:sospet/service/PetReportService.dart';
- // We'll create this next
+
 
 class ReportPetPage extends StatefulWidget {
   @override
@@ -12,20 +12,20 @@ class _ReportPetPageState extends State<ReportPetPage> {
   final _formKey = GlobalKey<FormState>();
   final PetReportService _reportService = PetReportService();
 
-  // Form field controllers and variables
-  String? _animalType; // Cachorro, Gato, Outro
-  String? _status; // Perdido, Encontrado
+
+  String? _animalType;
+  String? _status;
   final _addressController = TextEditingController();
   final _breedController = TextEditingController();
   final _colorController = TextEditingController();
-  String? _size; // Pequeno, Médio, Grande
+  String? _size;
   final _specialCharacteristicsController = TextEditingController();
-  final _reportDateController = TextEditingController(); // Consider using a date picker
+  final _reportDateController = TextEditingController();
 
   bool _isLoading = false;
 
-  // Placeholder for photo
-  String? _photoPlaceholder; // We'll just use a text confirmation for now
+
+  String? _photoPlaceholder;
 
   @override
   void dispose() {
@@ -42,8 +42,8 @@ class _ReportPetPageState extends State<ReportPetPage> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(), // Report date cannot be in the future
-      locale: Locale('pt', 'BR'), // For Portuguese date picker
+      lastDate: DateTime.now(),
+      locale: Locale('pt', 'BR'),
     );
     if (picked != null) {
       setState(() {
@@ -54,7 +54,7 @@ class _ReportPetPageState extends State<ReportPetPage> {
 
   void _submitReport() async {
     if (_formKey.currentState!.validate()) {
-      if (_photoPlaceholder == null) { // Basic check for photo placeholder
+      if (_photoPlaceholder == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Por favor, adicione uma "foto" (simulação).'),
@@ -67,7 +67,7 @@ class _ReportPetPageState extends State<ReportPetPage> {
       setState(() => _isLoading = true);
 
       try {
-        // Prepare data for Firestore
+
         Map<String, dynamic> reportData = {
           'animalType': _animalType,
           'status': _status,
@@ -76,9 +76,9 @@ class _ReportPetPageState extends State<ReportPetPage> {
           'predominantColor': _colorController.text.trim(),
           'size': _size,
           'specialCharacteristics': _specialCharacteristicsController.text.trim(),
-          'reportDate': _reportDateController.text.trim(), // Store as string for simplicity or convert to Timestamp
-          'photoUrl': _photoPlaceholder, // In a real app, this would be a Firebase Storage URL
-          'timestamp': DateTime.now(), // To order reports
+          'reportDate': _reportDateController.text.trim(),
+          'photoUrl': _photoPlaceholder,
+          'timestamp': DateTime.now(),
         };
 
         await _reportService.addPetReport(reportData);
@@ -102,7 +102,7 @@ class _ReportPetPageState extends State<ReportPetPage> {
             _size = null;
             _photoPlaceholder = null;
           });
-          Navigator.pop(context); // Go back to HomePage after successful submission
+          Navigator.pop(context);
         }
       } catch (e) {
         if (mounted) {
@@ -147,7 +147,7 @@ class _ReportPetPageState extends State<ReportPetPage> {
                 ),
                 SizedBox(height: 20),
 
-                // Animal Type
+
                 DropdownButtonFormField<String>(
                   decoration: _inputDecoration('Tipo do Animal'),
                   value: _animalType,
@@ -164,7 +164,7 @@ class _ReportPetPageState extends State<ReportPetPage> {
                 ),
                 SizedBox(height: 16),
 
-                // Status
+
                 DropdownButtonFormField<String>(
                   decoration: _inputDecoration('Status'),
                   value: _status,
@@ -190,15 +190,15 @@ class _ReportPetPageState extends State<ReportPetPage> {
                 ),
                 SizedBox(height: 16),
 
-                // Specific Breed
+
                 TextFormField(
                   controller: _breedController,
                   decoration: _inputDecoration('Raça Específica'),
-                  // Not mandatory, so no validator for emptiness
+
                 ),
                 SizedBox(height: 16),
 
-                // Predominant Color
+
                 TextFormField(
                   controller: _colorController,
                   decoration: _inputDecoration('Cor Predominante'),
@@ -207,7 +207,6 @@ class _ReportPetPageState extends State<ReportPetPage> {
                 ),
                 SizedBox(height: 16),
 
-                // Size
                 DropdownButtonFormField<String>(
                   decoration: _inputDecoration('Tamanho'),
                   value: _size,
@@ -224,7 +223,6 @@ class _ReportPetPageState extends State<ReportPetPage> {
                 ),
                 SizedBox(height: 16),
 
-                // Special Characteristics
                 TextFormField(
                   controller: _specialCharacteristicsController,
                   decoration: _inputDecoration('Características Especiais (opcional)'),
@@ -232,18 +230,18 @@ class _ReportPetPageState extends State<ReportPetPage> {
                 ),
                 SizedBox(height: 16),
 
-                // Report Date
+
                 TextFormField(
                   controller: _reportDateController,
                   decoration: _inputDecoration('Data do Evento (DD/MM/AAAA)', suffixIcon: Icon(Icons.calendar_today)),
-                  readOnly: true, // Make it read-only to force use of date picker
+                  readOnly: true,
                   onTap: _selectReportDate,
                   validator: (value) =>
                   value == null || value.isEmpty ? 'Campo obrigatório' : null,
                 ),
                 SizedBox(height: 24),
 
-                // Photo Placeholder
+
                 Text(
                   'Foto do Pet (Simulação)',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey[700]),
@@ -258,7 +256,7 @@ class _ReportPetPageState extends State<ReportPetPage> {
                     padding: EdgeInsets.symmetric(vertical: 12),
                   ),
                   onPressed: () {
-                    // Simulate adding a photo
+
                     setState(() {
                       _photoPlaceholder = 'simulated_image_path_${DateTime.now().millisecondsSinceEpoch}.jpg';
                     });

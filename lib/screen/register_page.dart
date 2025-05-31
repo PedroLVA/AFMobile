@@ -1,8 +1,6 @@
-// lib/register_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:sospet/service/AuthService.dart';
-// For phone number formatting, you might consider a package like 'mask_text_input_formatter'
-// import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -21,7 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
 
-  // final _phoneMaskFormatter = MaskTextInputFormatter( /* ... */ );
+
 
   @override
   void dispose() {
@@ -66,8 +64,7 @@ class _RegisterPageState extends State<RegisterPage> {
       }
     }
   }
-
-  // Helper for consistent InputDecoration
+ // Helper for consistent InputDecoration
   InputDecoration _buildInputDecoration(String labelText, IconData prefixIconData, {Widget? suffixIcon}) {
     return InputDecoration(
       labelText: labelText,
@@ -116,11 +113,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 32),
 
-                // Name field
+
                 TextFormField(
                   controller: _nameController,
                   enabled: !_isLoading,
-                  decoration: _buildInputDecoration('Nome completo', Icons.person), // <-- RESTORED
+                  decoration: _buildInputDecoration('Nome completo', Icons.person),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira seu nome';
@@ -133,12 +130,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 16),
 
-                // Email field
+
                 TextFormField(
                   controller: _emailController,
                   enabled: !_isLoading,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: _buildInputDecoration('Email', Icons.email), // <-- RESTORED
+                  decoration: _buildInputDecoration('Email', Icons.email),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, insira seu email';
@@ -151,12 +148,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 16),
 
-                // Phone number field
+
                 TextFormField(
                   controller: _phoneController,
                   enabled: !_isLoading,
                   keyboardType: TextInputType.phone,
-                  // inputFormatters: [_phoneMaskFormatter],
+
                   decoration: _buildInputDecoration('Celular (ex: 11912345678)', Icons.phone), // <-- Using helper
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -171,12 +168,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 16),
 
-                // Password field
+
                 TextFormField(
                   controller: _passwordController,
                   enabled: !_isLoading,
                   obscureText: _obscurePassword,
-                  decoration: _buildInputDecoration( // <-- RESTORED
+                  decoration: _buildInputDecoration(
                     'Senha',
                     Icons.lock,
                     suffixIcon: IconButton(
@@ -200,12 +197,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 16),
 
-                // Confirm Password field
                 TextFormField(
                   controller: _confirmPasswordController,
                   enabled: !_isLoading,
                   obscureText: _obscureConfirmPassword,
-                  decoration: _buildInputDecoration( // <-- RESTORED
+                  decoration: _buildInputDecoration(
                     'Confirmar senha',
                     Icons.lock_outline,
                     suffixIcon: IconButton(
@@ -229,10 +225,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 32),
 
-                // Register button
                 ElevatedButton(
                   onPressed: _isLoading ? null : _handleRegister,
-                  style: ElevatedButton.styleFrom( // <-- RESTORED/ENSURED STYLE
+                  style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue[800],
                     foregroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(vertical: 16),
@@ -242,7 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     elevation: 2,
                   ),
                   child: _isLoading
-                      ? SizedBox( // <-- RESTORED/ENSURED LOADING INDICATOR
+                      ? SizedBox(
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(
@@ -260,7 +255,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 SizedBox(height: 24),
 
-                // Login link
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

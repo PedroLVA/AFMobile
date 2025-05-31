@@ -1,8 +1,8 @@
-// login_page.dart
+
 import 'package:flutter/material.dart';
-import 'package:sospet/service/AuthService.dart'; // Your AuthService path
-import 'register_page.dart'; // Your RegisterPage path
-import 'home_page.dart'; // <--- ADD THIS IMPORT for your HomePage
+import 'package:sospet/service/AuthService.dart';
+import 'register_page.dart';
+import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -30,12 +30,12 @@ class _LoginPageState extends State<LoginPage> {
 
       try {
         await _authService.signInWithEmailAndPassword(
-          _emailController.text.trim(), // Good to keep the trim() here too
+          _emailController.text.trim(),
           _passwordController.text,
         );
 
-        // --- START: MODIFICATIONS FOR SUCCESS MESSAGE AND REDIRECTION ---
-        if (mounted) { // Check if the widget is still in the tree
+
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Login bem-sucedido! Redirecionando...'),
@@ -43,19 +43,19 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
 
-          // Navigate to HomePage and replace the current route
+
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()), // Make sure HomePage is imported
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
         }
-        // --- END: MODIFICATIONS FOR SUCCESS MESSAGE AND REDIRECTION ---
+
 
       } catch (e) {
-        if (mounted) { // Check if the widget is still in the tree
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(e.toString()), // Your _handleAuthException in AuthService will provide the PT message
+              content: Text(e.toString()),
               backgroundColor: Colors.red,
             ),
           );
@@ -69,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleForgotPassword() async {
-    // ... (your existing _handleForgotPassword code remains the same)
+
     if (_emailController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Por favor, insira seu email primeiro')),
@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    setState(() => _isLoading = true); // Optionally show loading indicator
+    setState(() => _isLoading = true);
     try {
       await _authService.resetPassword(_emailController.text);
       if (mounted) {
@@ -104,8 +104,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // ... (your existing build method remains the same)
-    // Just ensure you have the import for HomePage at the top of the file.
+
+
     return Scaffold(
       backgroundColor: Colors.blue[50],
       appBar: AppBar(

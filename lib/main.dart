@@ -24,15 +24,15 @@ class MyApp extends StatelessWidget {
       ),
       home: AuthWrapper(),
       debugShowCheckedModeBanner: false,
-      // ... other properties
+      
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: [
-        const Locale('pt', 'BR'), // Portuguese, Brazil
-        const Locale('en', 'US'), // English, US (optional fallback)
+        const Locale('pt', 'BR'), 
+        const Locale('en', 'US'), 
       ],
     );
   }
@@ -44,7 +44,7 @@ class AuthWrapper extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // Show loading while checking auth state
+        
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             backgroundColor: Colors.blue[50],
@@ -73,12 +73,12 @@ class AuthWrapper extends StatelessWidget {
           );
         }
 
-        // If user is logged in, show home page
+        
         if (snapshot.hasData) {
           return HomePage();
         }
 
-        // If user is not logged in, show welcome page
+        
         return WelcomePage();
       },
     );
@@ -93,7 +93,7 @@ class WelcomePage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
+            
             Container(
               padding: EdgeInsets.all(20),
               child: Text(
@@ -106,7 +106,7 @@ class WelcomePage extends StatelessWidget {
               ),
             ),
 
-            // Main content
+            
             Expanded(
               child: Center(
                 child: Column(
@@ -142,7 +142,7 @@ class WelcomePage extends StatelessWidget {
         ),
       ),
 
-      // Login button in bottom right
+      
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(

@@ -33,7 +33,7 @@ class PetReportModel {
     required this.userId,
     required this.reporterName,
     this.reporterEmail,
-    this.reporterPhoneNumber, // <-- ADDED to constructor
+    this.reporterPhoneNumber,
   });
 
   factory PetReportModel.fromFirestore(DocumentSnapshot doc) {
@@ -53,7 +53,7 @@ class PetReportModel {
       userId: data['userId'] ?? '',
       reporterName: data['reporterName'] ?? 'Reportante Anônimo',
       reporterEmail: data['reporterEmail'],
-      reporterPhoneNumber: data['reporterPhoneNumber'], // <-- PARSE from Firestore data
+      reporterPhoneNumber: data['reporterPhoneNumber'],
     );
   }
 }

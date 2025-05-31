@@ -14,7 +14,7 @@ class HomePage extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      // ... (your existing Scaffold properties: backgroundColor, appBar)
+
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
         title: Text('SOS Pet'),
@@ -62,7 +62,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ... (your existing Welcome message container) ...
+
               Container(
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -133,17 +133,17 @@ class HomePage extends StatelessWidget {
                       Icons.search,
                       Colors.green,
                           () {
-                        // --- MODIFICATION FOR NAVIGATION ---
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => SearchPetsPage()),
                         );
-                        // --- END MODIFICATION ---
+
                       },
                     ),
                     _buildActionCard(
                       context,
-                      'Reportar Pet', // Changed from "Reportar Pet Perdido"
+                      'Reportar Pet',
                       Icons.add_alert,
                       Colors.orange,
                           () {
@@ -185,7 +185,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // ... (your existing _buildActionCard method) ...
+
   Widget _buildActionCard(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap) {
     return Card(
       elevation: 3,

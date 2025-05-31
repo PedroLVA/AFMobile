@@ -1,9 +1,9 @@
-// lib/pet_details_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:sospet/model/pet_report_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// import 'package:url_launcher/url_launcher.dart'; // For "mailto" links
+
 
 class PetDetailsPage extends StatelessWidget {
   final PetReportModel petReport;
@@ -16,29 +16,11 @@ class PetDetailsPage extends StatelessWidget {
       await launchUrl(uri);
     } else {
       print('Could not launch $url');
-      // Optionally show a SnackBar to the user
-      // ScaffoldMessenger.of(scaffoldContext).showSnackBar(SnackBar(content: Text('Não foi possível abrir o link.')));
+
     }
   }
 
-  // Helper to launch email (optional)
-  // Future<void> _launchEmail(String? email) async {
-  //   if (email != null && email.isNotEmpty) {
-  //     final Uri emailLaunchUri = Uri(
-  //       scheme: 'mailto',
-  //       path: email,
-  //       queryParameters: {
-  //         'subject': 'Contato sobre o pet: ${petReport.animalType} (${petReport.status})'
-  //       }
-  //     );
-  //     if (await canLaunchUrl(emailLaunchUri)) {
-  //       await launchUrl(emailLaunchUri);
-  //     } else {
-  //       // Handle error, e.g., show a SnackBar
-  //       print('Could not launch $emailLaunchUri');
-  //     }
-  //   }
-  // }
+
 
   @override
   @override
@@ -55,7 +37,7 @@ class PetDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Pet Image Placeholder (existing code)
+
             Center(
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.8,
@@ -84,7 +66,7 @@ class PetDetailsPage extends StatelessWidget {
             _buildSectionTitle('Informações do Reportante'),
             _buildDetailItem('Nome:', petReport.reporterName),
 
-            // Display Email (existing code, modified for _launchUniversalLink)
+
             if (petReport.reporterEmail != null && petReport.reporterEmail!.isNotEmpty)
               Card(
                 elevation: 1,
@@ -99,7 +81,7 @@ class PetDetailsPage extends StatelessWidget {
                 ),
               ),
 
-            // --- DISPLAY PHONE NUMBER ---
+
             if (petReport.reporterPhoneNumber != null && petReport.reporterPhoneNumber!.isNotEmpty)
               Card(
                 elevation: 1,
@@ -109,21 +91,18 @@ class PetDetailsPage extends StatelessWidget {
                   title: Text(petReport.reporterPhoneNumber!),
                   subtitle: Text('Toque para ligar (simulação) ou copiar'),
                   onTap: () {
-                    // For actual calling, use: _launchUniversalLink('tel:${petReport.reporterPhoneNumber}');
-                    // For now, just a SnackBar or copy to clipboard functionality
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Número para contato: ${petReport.reporterPhoneNumber}')),
                     );
-                    // You could also add copy to clipboard functionality here
-                    // Clipboard.setData(ClipboardData(text: petReport.reporterPhoneNumber!));
-                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Número copiado!')));
+
                   },
-                  onLongPress: () { // Example: Long press to try launching call
+                  onLongPress: () {
                     _launchUniversalLink('tel:${petReport.reporterPhoneNumber}');
                   },
                 ),
               ),
-            // --- END PHONE NUMBER ---
+
 
             SizedBox(height: 16),
             Text(
